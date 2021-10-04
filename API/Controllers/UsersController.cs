@@ -5,6 +5,8 @@ using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using NLog;
 
 namespace API.Controllers
 {
@@ -12,6 +14,8 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
+        private static ILogger _logger = NLog.LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
+
         private readonly DataContext _dataContext;
         public UsersController(DataContext dataContext)
         {
@@ -21,14 +25,17 @@ namespace API.Controllers
         // api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
-        {            
+        {
+            _logger.Info("GET GetUsers");
+            _logger.Error("GET GetUsers");
             return await _dataContext.Users.ToListAsync();
         }
 
         // api/users/1
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
-        {            
+        {
+            _logger.Info("GET GetUser");
             return await _dataContext.Users.FindAsync(id);
         }
     }

@@ -60,6 +60,8 @@ namespace API
 
             app.UseAuthentication();
 
+            app.UseCors();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
