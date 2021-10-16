@@ -9,11 +9,13 @@ using API.Entities;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 
 namespace API.Controllers
 {
     public class AccountController : BaseApiController
     {
+        private static ILogger _logger = NLog.LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
         public AccountController(DataContext context, ITokenService tokenService)
@@ -25,6 +27,7 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(DTOs.RegisterDto registerDto)
         {
+            _logger.Info("POST Register");
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken.");
 
             using var hmac = new System.Security.Cryptography.HMACSHA512();
@@ -49,6 +52,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
+            _logger.Info("POST Login");
             var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
             if (user == null) return Unauthorized("Invalid username.");
