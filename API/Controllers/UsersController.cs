@@ -6,15 +6,12 @@ using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using NLog;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     public class UsersController : BaseApiController
-    {
-        private static ILogger _logger = NLog.LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
-
+    {        
         private readonly DataContext _dataContext;
         public UsersController(DataContext dataContext)
         {
