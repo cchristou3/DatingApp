@@ -14,8 +14,7 @@ using NLog;
 namespace API.Controllers
 {
     public class AccountController : BaseApiController
-    {
-        private static ILogger _logger = NLog.LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
+    {        
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
         public AccountController(DataContext context, ITokenService tokenService)
