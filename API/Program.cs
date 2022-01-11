@@ -21,9 +21,11 @@ namespace API
             var services = scope.ServiceProvider;
             try
             {
-                var context = services.GetRequiredService<DataContext>();
-                await context.Database.MigrateAsync(); // migrate database whenever we restart the application
-                await Seed.SeedUsers(context);
+                using(var context = services.GetRequiredService<DataContext>())
+                {
+                    await context.Database.MigrateAsync(); // migrate database whenever we restart the application
+                    await Seed.SeedUsers(context);
+                }
             }
             catch (System.Exception ex)
             {

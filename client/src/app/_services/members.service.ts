@@ -1,33 +1,81 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
+import { PaginatedResult } from '../_models/pagination';
+import { User } from '../_models/user';
+import { UserParams } from '../_models/userParams';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MembersService {
+export class  MembersService {
 
   baseUrl = environment.apiUrl;
   members: Member[] = [];
+  memberCache = new Map();
+  user: User;
+  private _userParams: UserParams;
 
-  constructor(private http: HttpClient) { }
+  get userParams() { return this._userParams; }
+  set userParams(userParams: UserParams) { this._userParams = userParams; }
+  resetUserParams() { this._userParams = new UserParams(this.user); return this.userParams; }
 
-  getMembers(): Observable<Member[]> {
-    if (this.members.length > 0) return of(this.members);
-    return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
-      map(members => {
-        this.members = members;
-        return members;
+  constructor(private http: HttpClient, private accountService: AccountService) {
+    this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
+      this.user = user;
+      this._userParams = new UserParams(this.user)
+    })
+  }
+
+  getMembers(userParams: UserParams) {
+    const response = this.memberCache.get(this.getUserParamsKey(userParams));
+    if (response) return of(response);
+
+    let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
+
+    params = params.append('minAge', userParams.minAge.toString());
+    params = params.append('maxAge', userParams.maxAge.toString());
+    params = params.append('gender', userParams.gender);
+    params = params.append('orderBy', userParams.orderBy);
+
+    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params)
+      .pipe(
+        map(response => {
+          this.memberCache.set(this.getUserParamsKey(userParams), response)
+          return response;
+        })
+      );
+  }
+
+  private getPaginatedResult<T>(url: any, params: any) {
+    const paginationResult: PaginatedResult<T> = new PaginatedResult<T>();
+    return this.http.get<T>(url, { observe: 'response', params }).pipe(
+      map(response => {
+        paginationResult.result = response.body;
+        if (response.headers.get('Pagination')) {
+          paginationResult.pagination = JSON.parse(response.headers.get('Pagination'));
+        }
+        return paginationResult;
       })
-    )
+    );
+  }
+
+  private getPaginationHeaders(pageNumber: number, pageSize: number) {
+    return new HttpParams()
+      .append('pageNumber', pageNumber)
+      .append('pageSize', pageSize);
   }
 
   getMember(username: string) {
-    const member = this.members.find(x => x.username === username);
-    if (member !== undefined) return of(member);
+    const member: Member = this.getLatestCachedMemberByUsername(username);
+    if (member) {
+      return of(member);
+    }
+
     return this.http.get<Member>(this.baseUrl + 'users/' + username)
   }
 
@@ -46,5 +94,25 @@ export class MembersService {
 
   removePhoto(photoId: number) {
     return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+  }
+
+  private getUserParamsKey(userParams: UserParams): string {
+    return Object.values(userParams).join('-');
+  }
+
+  private getLatestCachedMemberByUsername(username: string): Member {
+    // Get all member objects with username matching the given one.
+    const members: Member[] = [...this.memberCache.values()]
+      .reduce((arr, currentPaginationResult) =>
+        arr.concat(currentPaginationResult.result), []
+      ).filter(x => x.username == username);
+
+    // sort based on the last active
+    members.sort((first, second) => 0 - (second.lastActive > first.lastActive ? -1 : 1));
+    if (members.length > 0) {
+      // Get the first one -> the most recent version of it
+      return members[0];
+    }
+    return null;
   }
 }
