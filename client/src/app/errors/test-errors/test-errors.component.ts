@@ -9,7 +9,6 @@ import { Observable } from 'rxjs';
 })
 export class TestErrorsComponent implements OnInit {
 
-  baseUrl = 'https://localhost:5001/api/';
   validationErrors: string[] = [];
   constructor(private http: HttpClient) { }
 
@@ -26,23 +25,23 @@ export class TestErrorsComponent implements OnInit {
   }
 
   get404Error() {
-    this.logObservableResponse(this.http.get(this.baseUrl + 'buggy/not-found'));
+    this.logObservableResponse(this.http.get('buggy/not-found'));
   }
 
   get400Error() {
-    this.logObservableResponse(this.http.get(this.baseUrl + 'buggy/bad-request'));
+    this.logObservableResponse(this.http.get('buggy/bad-request'));
   }
 
   get500Error() {
-    this.logObservableResponse(this.http.get(this.baseUrl + 'buggy/server-error'));
+    this.logObservableResponse(this.http.get('buggy/server-error'));
   }
 
   get401Error() {
-    this.logObservableResponse(this.http.get(this.baseUrl + 'buggy/auth'));
+    this.logObservableResponse(this.http.get('buggy/auth'));
   }
   
   get400ValidationError() {
-    this.logObservableResponse(this.http.post(this.baseUrl + 'account/register',{}));
+    this.logObservableResponse(this.http.post('account/register',{}));
   }
 
 }

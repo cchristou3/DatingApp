@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
@@ -12,9 +11,8 @@ import { AccountService } from './account.service';
 @Injectable({
   providedIn: 'root'
 })
-export class  MembersService {
+export class MembersService {
 
-  baseUrl = environment.apiUrl;
   members: Member[] = [];
   memberCache = new Map();
   user: User;
@@ -42,7 +40,7 @@ export class  MembersService {
     params = params.append('gender', userParams.gender);
     params = params.append('orderBy', userParams.orderBy);
 
-    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params)
+    return this.getPaginatedResult<Member[]>('users', params)
       .pipe(
         map(response => {
           this.memberCache.set(this.getUserParamsKey(userParams), response)
@@ -76,11 +74,11 @@ export class  MembersService {
       return of(member);
     }
 
-    return this.http.get<Member>(this.baseUrl + 'users/' + username)
+    return this.http.get<Member>('users/' + username)
   }
 
   updateMember(member: Member) {
-    return this.http.put(this.baseUrl + 'users', member).pipe(
+    return this.http.put('users', member).pipe(
       map(() => {
         const index = this.members.indexOf(member);
         this.members[index] = member;
@@ -88,12 +86,22 @@ export class  MembersService {
     );
   }
 
+  addLike(username: string) {
+    return this.http.post(`likes/${username}`, {});
+  }
+
+  getLikes(predicate: string, pageNumber: number, pageSize: number) {
+    let params = this.getPaginationHeaders(pageNumber, pageSize);
+    params = params.append('predicate', predicate);
+    return this.getPaginatedResult<Partial<Member[]>>('likes', params);
+  }
+
   setMainPhoto(photoId: number) {
-    return this.http.put(this.baseUrl + 'users/set-main-photo/' + photoId, {});
+    return this.http.put('users/set-main-photo/' + photoId, {});
   }
 
   removePhoto(photoId: number) {
-    return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+    return this.http.delete('users/delete-photo/' + photoId);
   }
 
   private getUserParamsKey(userParams: UserParams): string {
