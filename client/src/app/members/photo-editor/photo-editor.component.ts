@@ -60,7 +60,7 @@ export class PhotoEditorComponent implements OnInit {
   }
 
   setMainPhoto(photo: Photo) {
-    this.memberService.setMainPhoto(photo.id).subscribe(() => {
+    this.memberService.setMainPhoto(photo.id).pipe(take(1)).subscribe(() => {
       this.user!.photoUrl = photo.url;
       this.accountService.setCurrentUser(this.user!);
       this.member.photoUrl = photo.url;
@@ -72,7 +72,7 @@ export class PhotoEditorComponent implements OnInit {
   }
   
   deletePhoto(photoId: number){
-    this.memberService.removePhoto(photoId).subscribe(() => {
+    this.memberService.removePhoto(photoId).pipe(take(1)).subscribe(() => {
       this.member.photos = this.member.photos.filter(x => x.id !== photoId);
     })
   }

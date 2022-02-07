@@ -50,7 +50,7 @@ namespace API.Data
             return await PagedList<LikeDTO>.CreateAsync(users.OrderBy(u => u.UserName).Select(user => new LikeDTO
             {
                 Id = user.Id,
-                UserName = user.UserName,
+                Username = user.UserName,
                 Age = user.DateOfBirth.CalculateAge(),
                 KnownAs = user.KnownAs,
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain).Url,

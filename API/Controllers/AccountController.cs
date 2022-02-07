@@ -29,7 +29,7 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(DTOs.RegisterDto registerDto)
         {
-            _logger.Info("POST Register");
+            _logger.Info("POST Account.Register");
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken.");
 
             var user = _mapper.Map<RegisterDto, AppUser>(registerDto);
@@ -55,7 +55,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {                     
-            _logger.Info("POST Login");
+            _logger.Info("POST Account.Login");
 
             var user = await _context.Users.Include(x => x.Photos).SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 

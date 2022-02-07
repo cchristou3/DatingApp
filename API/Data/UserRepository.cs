@@ -23,7 +23,7 @@ namespace API.Data
             _context = context;
         }
 
-        public async Task<MemberDto> GetMemberByUserameAsync(string username)
+        public async Task<MemberDto> GetMemberByUsernameAsync(string username)
         {
             return await _context
                                 .Users

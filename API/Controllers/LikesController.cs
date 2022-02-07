@@ -24,7 +24,7 @@ namespace API.Controllers
         [HttpPost("{username}")]
         public async Task<ActionResult> AddLike(string username)
         {
-            _logger.Info("POST AddLike");
+            _logger.Info("POST Likes.AddLike");
 
             var sourceUserId = User.GetId();
             var likedUser = await _userRepository.GetUserByUsernameAsync(username);
@@ -53,13 +53,13 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LikeDTO>>> GetUsersLikes([FromQuery] LikesParams likesParams)
         {
-            _logger.Info("GET GetUsersLikes");
+            _logger.Info("GET Likes.GetUsersLikes");
 
             likesParams.UserId = User.GetId();
 
             var users = await _likesRepository.GetUserLikes(likesParams);
             
-            // Inform frontend about the pagination
+            // Inform frontend Likes.about the pagination
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(users);

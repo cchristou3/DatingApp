@@ -33,11 +33,11 @@ export class MemberEditComponent implements OnInit {
   }
 
   loadMember() {
-    this.memberService.getMember(this.user?.userName ?? "").subscribe(member => this.member = member);
+    this.memberService.getMember(this.user?.userName ?? "").pipe(take(1)).subscribe(member => this.member = member);
   }
 
   updateMember() {
-    this.memberService.updateMember(this.member).subscribe(response => {      
+    this.memberService.updateMember(this.member).pipe(take(1)).subscribe(response => {      
       this.toastr.success('Profile updated successfully');
       this.editForm.reset(this.member);
     }, error => {

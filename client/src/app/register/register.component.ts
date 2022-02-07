@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { take } from 'rxjs/operators';
 import { AccountService } from '../_services/account.service';
 
 @Component({
@@ -51,7 +52,7 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {    
-    this.accountService.register(this.registerForm.value).subscribe(() => {
+    this.accountService.register(this.registerForm.value).pipe(take(1)).subscribe(() => {
       this.router.navigateByUrl('/members')      
     }, error => {      
       this.validationErrors = error;
