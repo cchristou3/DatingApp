@@ -20,10 +20,8 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      { path: 'members', component: MemberListComponent },
-      { path: 'members/:username', component: MemberDetailComponent, resolve: { member: MemberDetailedResolver } },
-      { path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard] },
-      { path: 'lists', component: ListsComponent },
+      { path: 'members', loadChildren: () => import('./members/members.module').then(m => m.MembersModule) },
+      { path: 'lists', loadChildren: () => import('./lists/lists.module').then(m => m.ListsModule) },
       { path: 'messages', component: MessagesComponent },]
   },
   { path: 'error', component: TestErrorsComponent },
