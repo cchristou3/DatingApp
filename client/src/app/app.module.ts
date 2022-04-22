@@ -16,11 +16,13 @@ import { ErrorInterceptor } from './_interceptors/error.interceptor';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ServerErrorComponent } from './server-error/server-error.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
-import { NgxSpinner, NgxSpinnerModule } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { DateInputComponent } from './_forms/date-input/date-input.component';
 import { BaseUrlInterceptor } from './_interceptors/base-url.interceptor';
+import { HasRoleDirective } from './_directives/has-role.directive';
+import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,7 @@ import { BaseUrlInterceptor } from './_interceptors/base-url.interceptor';
     ServerErrorComponent,
     TextInputComponent,
     DateInputComponent,
+    RolesModalComponent 
   ],
   imports: [
     BrowserModule,

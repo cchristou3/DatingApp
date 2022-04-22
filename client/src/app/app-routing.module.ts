@@ -10,6 +10,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ServerErrorComponent } from './server-error/server-error.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { OnlyAdminsAllowedGuard } from './_guards/only-admins-allowed.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 import { MemberDetailedResolver } from './_resolvers/member-detailed.resolver';
 
@@ -22,7 +23,9 @@ const routes: Routes = [
     children: [
       { path: 'members', loadChildren: () => import('./members/members.module').then(m => m.MembersModule) },
       { path: 'lists', loadChildren: () => import('./lists/lists.module').then(m => m.ListsModule) },
-      { path: 'messages', component: MessagesComponent },]
+      { path: 'messages', component: MessagesComponent },
+      { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule), canLoad: [OnlyAdminsAllowedGuard] },
+    ],
   },
   { path: 'error', component: TestErrorsComponent },
   { path: 'not-found', component: NotFoundComponent },

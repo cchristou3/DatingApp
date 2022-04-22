@@ -38,6 +38,7 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
+    user.roles = this.getRolesFromToken(user.token);
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
@@ -45,5 +46,25 @@ export class AccountService {
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+  }
+
+  getRolesFromToken(token: string) {
+    const roles = this.getDecodedToken(token).role
+    return Array.isArray(roles) ? roles : [ roles ];
+  }
+
+  private getDecodedToken(token: string) {
+    // The token is split into three parts: headers, payload, and signature.
+    // We want to access the payload.
+    return JSON.parse(atob(token.split('.')[1]));
+  }
+
+  isAdmin() {
+    return this.currentUser$.pipe(
+      map(user => {
+        if (user && (user.roles.includes('Admin') || user.roles.includes('Moderator'))) return true;
+        return false;
+    })
+    )
   }
 }

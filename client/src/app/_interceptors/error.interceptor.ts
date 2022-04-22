@@ -17,7 +17,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
-      catchError(error => {        
+      catchError(error => {
         if (error) {
           switch (error.status) {
             case 400:
@@ -29,17 +29,21 @@ export class ErrorInterceptor implements HttpInterceptor {
                   }
                 }
                 throw modalStateErrors.flat();
-              } else if (typeof(error.error) === 'object') {
-                this.toastr.error(error.statusText === 'OK' ? 'Bad Request' : error.statusText, error.status);              
+              } else if (typeof (error.error) === 'object') {
+                this.toastr.error(error.statusText === 'OK' ? 'Bad Request' : error.statusText, error.status);
               }
               else {
                 this.toastr.error(error.error, error.status);
               }
               break;
             case 401:
-              this.toastr.error(error.statusText === 'OK' ? 'Unauthorised' : error.statusText, error.status);              
+              this.toastr.error(error.statusText === 'OK' ? 'Unauthorised' : error.statusText, error.status);
               break;
-            
+
+            case 403:
+              this.toastr.error(error.statusText === 'OK' ? 'Forbidden' : error.statusText, error.status);
+              break;
+
             case 404:
               this.router.navigateByUrl('not-found');
               break;

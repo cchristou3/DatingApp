@@ -30,7 +30,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        // api/users        
+        // api/users
         [HttpGet]
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
