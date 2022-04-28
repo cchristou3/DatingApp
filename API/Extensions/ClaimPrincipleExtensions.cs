@@ -11,7 +11,7 @@ namespace API.Extensions
         public static string GetUsername(this ClaimsPrincipal user)
         {
             //* `ClaimTypes.Name` represents the `JwtRegisteredClaimNames.UniqueName` 
-            //* that we have set up inthe token service
+            //* that we have set up in the token service
             return user.FindFirst(ClaimTypes.Name)?.Value;
         }
 

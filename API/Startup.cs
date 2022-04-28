@@ -8,6 +8,7 @@ using API.Extensions;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
+using API.SignalR;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,8 @@ namespace API
             services.AddControllers();
             services.AddCors();
             services.AddIndentityServices(_config);
+            services.AddSignalR();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -65,7 +68,11 @@ namespace API
 
             app.UseRouting();
 
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200"));
+            app.UseCors(x => 
+            x.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithOrigins("https://localhost:4200"));
 
             app.UseAuthentication();
 
@@ -74,6 +81,10 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // tell our routing about our hub api endpoints
+                endpoints.MapHub<PresenceHub>("hubs/presence");
+                endpoints.MapHub<MessageHub>("hubs/message");
             });
         }
     }

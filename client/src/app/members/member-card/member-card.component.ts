@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
 import { Member } from 'src/app/_models/member';
 import { MembersService } from 'src/app/_services/members.service';
+import { PresenceService } from 'src/app/_services/presence.service';
 
 @Component({
   selector: 'app-member-card',
@@ -14,7 +15,10 @@ export class MemberCardComponent implements OnInit {
 
   @Input() member!: Member;
 
-  constructor(private membersService: MembersService, private toastr: ToastrService, private router: Router) { }
+  constructor(private membersService: MembersService,
+    private toastr: ToastrService,
+    private router: Router,
+    public presence: PresenceService) { }
 
   ngOnInit(): void {
   }
@@ -26,7 +30,7 @@ export class MemberCardComponent implements OnInit {
   }
 
   navigateToProfileMessages() {
-    this.router.navigate(['./members/' + this.member.username], { queryParams: { tab: 3 }  });
+    this.router.navigate(['./members/' + this.member.username], { queryParams: { tab: 3 } });
   }
 
 }

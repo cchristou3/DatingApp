@@ -1,12 +1,12 @@
 <div class="card">
     <div class="card-body">
-        <div *ngIf="messages.length === 0; else list">
+        <div *ngIf="(messageService.messageThread$ | async).length === 0; else list">
             No messages yet... say hi by using the message box below
         </div>
 
         <ng-template #list>
             <ul class="chat">
-                <li *ngFor="let message of messages">
+                <li *ngFor="let message of (messageService.messageThread$ | async)">
                     <div>
                         <span class="chat-image float-right">
                             <img src="{{ message.senderPhotoUrl || './assets/user.png'}}"

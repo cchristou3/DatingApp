@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../_models/user';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AccountService {
   private currentUserSource = new ReplaySubject<User | null>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private presence: PresenceService) { }
 
   login(model: any) {
     return this.http.post<User>('account/login', model).pipe(
@@ -22,6 +23,7 @@ export class AccountService {
         const user = response;
         if (user) {
           this.setCurrentUser(user);
+          this.presence.createHubConnection(user);
         }
       })
     )
@@ -32,6 +34,7 @@ export class AccountService {
       map((user: User) => {
         if (user) {
           this.setCurrentUser(user);
+          this.presence.createHubConnection(user);
         }
       })
     )
@@ -46,6 +49,7 @@ export class AccountService {
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.presence.stopHubConnection();
   }
 
   getRolesFromToken(token: string) {
@@ -59,7 +63,7 @@ export class AccountService {
     return JSON.parse(atob(token.split('.')[1]));
   }
 
-  isAdmin() {
+  isAdmin() : Observable<boolean> {
     return this.currentUser$.pipe(
       map(user => {
         if (user && (user.roles.includes('Admin') || user.roles.includes('Moderator'))) return true;

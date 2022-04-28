@@ -27,6 +27,15 @@ namespace API.Helpers
                 src.Sender.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(dest => dest.RecipientPhotoUrl, opt => opt.MapFrom(src =>
                 src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));
+            
+            //* Concept:
+            //* To avoid any date times mismatches, we are going to use DateTime.UtcNow.
+            //* This will ensure that all clients have the same date times.
+            //* We just will need to add the 'Z' at the end of it, so that the client will know
+            //* that it is a Utc Time, and to convert it to its local time zone.
+            // When we return the dates to the client, they are going to have that 'Z' on the end of it
+            CreateMap<DateTime, DateTime>()
+            .ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         }
     }
 }
