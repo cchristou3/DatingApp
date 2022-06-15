@@ -11,7 +11,7 @@ import { MemberEditComponent } from './member-edit/member-edit.component';
 const routes: Routes = [
   { path: '', component: MemberListComponent },
   { path: ':username', component: MemberDetailComponent, resolve: { member: MemberDetailedResolver } },
-  { path: 'edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard] },
+  { path: ':username/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard] },
 ]
 
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { Message } from '../_models/message';
 import { Pagination } from '../_models/pagination';
+import { ConfirmService } from '../_services/confirm.service';
 import { MessageService } from '../_services/message.service';
 
 @Component({
@@ -18,13 +19,14 @@ export class MessagesComponent implements OnInit {
   pageSize = 5;
   isLoading = false;
 
-  constructor(private messageService: MessageService) { }
+  constructor(private messageService: MessageService, private confirmService: ConfirmService) { }
 
   ngOnInit(): void {
     this.loadMessages();
   }
 
   loadMessages() {
+    console.log('loadMessages');
     this.isLoading = true;
     this.messageService.getMessages(this.pageNumber, this.pageSize, this.container)
       .pipe(take(1))
@@ -46,9 +48,14 @@ export class MessagesComponent implements OnInit {
   }
 
   deleteMessage(id: number) {
-    this.messageService.deleteMessage(id).pipe(take(1)).subscribe(() => {
-      const deletedMessageIndex = this.messages.findIndex(m => m.id == id)
-      this.messages.splice(deletedMessageIndex, 1);
+    this.confirmService.confirm('Confirm delete message', 'This cannot be undone')
+    .subscribe(positiveResult => {
+      if (positiveResult) {
+        this.messageService.deleteMessage(id).pipe(take(1)).subscribe(() => {
+          const deletedMessageIndex = this.messages.findIndex(m => m.id == id)
+          this.messages.splice(deletedMessageIndex, 1);
+        })
+      }
     })
   }
 

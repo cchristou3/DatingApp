@@ -23,6 +23,7 @@ import { DateInputComponent } from './_forms/date-input/date-input.component';
 import { BaseUrlInterceptor } from './_interceptors/base-url.interceptor';
 import { HasRoleDirective } from './_directives/has-role.directive';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
+import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { RolesModalComponent } from './modals/roles-modal/roles-modal.component'
     ServerErrorComponent,
     TextInputComponent,
     DateInputComponent,
-    RolesModalComponent 
+    RolesModalComponent,
+    ConfirmDialogComponent 
   ],
   imports: [
     BrowserModule,

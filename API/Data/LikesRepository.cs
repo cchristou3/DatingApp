@@ -16,6 +16,7 @@ namespace API.Data
         private readonly DataContext _context;
         public LikesRepository(DataContext context)
         {
+            Console.WriteLine("LikesRepository");
             _context = context;
         }
 

@@ -34,8 +34,9 @@ namespace API.Helpers
             //* We just will need to add the 'Z' at the end of it, so that the client will know
             //* that it is a Utc Time, and to convert it to its local time zone.
             // When we return the dates to the client, they are going to have that 'Z' on the end of it
-            CreateMap<DateTime, DateTime>()
-            .ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+            // CreateMap<DateTime, DateTime>()
+            // .ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+            //* Commented out because we are using ApplyUtcDateTimeConverter instead.
         }
     }
 }

@@ -16,18 +16,40 @@ namespace API.Extensions
         */
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string columnToOrderWith, bool ascending = true)
         {
-            var type = typeof(T);    
+            var type = typeof(T);
             var propName = columnToOrderWith;
             // Get the property that matches with the given property name
             var property = type
                         .GetProperties()
-                        .SingleOrDefault(x => x.Name.Equals(propName,StringComparison.OrdinalIgnoreCase));
+                        .SingleOrDefault(x => x.Name.Equals(propName, StringComparison.OrdinalIgnoreCase));
             var parameter = Expression.Parameter(type, "p");
             var propertyAccess = Expression.MakeMemberAccess(parameter, property);
             var orderByExp = Expression.Lambda(propertyAccess, parameter);
             var methodName = (ascending ? "OrderBy" : "OrderByDescending");
             MethodCallExpression resultExp = Expression.Call(typeof(Queryable), methodName, new Type[] { type, property.PropertyType }, source.Expression, Expression.Quote(orderByExp));
             return source.Provider.CreateQuery<T>(resultExp);
+        }
+
+        public static IQueryable<V> Select<T, V>(this IQueryable<T> source, string propertyToRetrieve)
+        {
+            var type = typeof(T);
+            var propName = propertyToRetrieve;
+            // Get the property that matches with the given property name
+            var property = type.GetProperties().SingleOrDefault(x => x.Name.Equals(propName, StringComparison.OrdinalIgnoreCase));
+
+            var parameter = Expression.Parameter(type, "p");
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            var selectLambda = Expression.Lambda(propertyAccess, parameter);
+            var methodName = "Select";
+            MethodCallExpression resultExp = Expression.Call(
+                typeof(Queryable),
+                methodName,
+                new Type[] { type, property.PropertyType },
+                source.Expression,
+                Expression.Quote(selectLambda)
+            );
+
+            return source.Provider.CreateQuery<V>(resultExp);
         }
     }
 }

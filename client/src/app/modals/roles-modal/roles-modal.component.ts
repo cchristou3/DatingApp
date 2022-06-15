@@ -8,7 +8,7 @@ import { User } from 'src/app/_models/user';
   templateUrl: './roles-modal.component.html',
   styleUrls: ['./roles-modal.component.css']
 })
-export class RolesModalComponent implements OnInit {
+export class RolesModalComponent {
 
   updateSelectedRoles = new EventEmitter<any[]>();
 
@@ -19,9 +19,6 @@ export class RolesModalComponent implements OnInit {
   roles: any[];
 
   constructor(public bsModalRef: BsModalRef) { }
-
-  ngOnInit(): void {
-  }
 
   updateRoles() {
     this._updateSelectedRolesSource.next(this.roles);

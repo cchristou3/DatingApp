@@ -18,6 +18,7 @@ namespace API.Data
         private readonly IMapper _mapper;
         public MessageRepository(DataContext context, IMapper mapper)
         {
+            Console.WriteLine("MessageRepository");
             _mapper = mapper;
             _context = context;
         }
@@ -65,6 +66,7 @@ namespace API.Data
         {
             var query = _context.Messages
                 .OrderByDescending(m => m.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .AsQueryable();
 
             query = messageParams.Container switch
@@ -75,21 +77,19 @@ namespace API.Data
                                         && u.DateRead == null)
             };
 
-            var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
-
-            return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
+            return await PagedList<MessageDto>.CreateAsync(query, messageParams.PageNumber, messageParams.PageSize);
         }
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientname)
         {
             var messages = await _context.Messages
-                .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+            // TODO: Investigate this: without the includes, joins are still done (better performance?)
                 .Where(m =>
                     (m.RecipientUsername == currentUsername && m.SenderUsername == recipientname && !m.RecipientDeleted) ||
                     (m.RecipientUsername == recipientname && m.SenderUsername == currentUsername && !m.SenderDeleted)
                 )
                 .OrderBy(m => m.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             var unreadMessages = messages.Where(m =>
@@ -103,21 +103,14 @@ namespace API.Data
                 {
                     message.DateRead = DateTime.UtcNow;
                 });
-
-                await _context.SaveChangesAsync();
             }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return messages;
         }
 
         public void RemoveConnection(Connection connection)
         {
             _context.Connections.Remove(connection);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
