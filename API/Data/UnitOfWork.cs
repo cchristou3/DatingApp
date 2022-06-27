@@ -15,18 +15,23 @@ namespace API.Data
         {
             _mapper = mapper;
             _context = context;
+            _userRepository = new Lazy<IUserRepository>(() =>  new UserRepository(_context, _mapper));
+            _messageRepository = new Lazy<IMessageRepository>(() =>  new MessageRepository(_context, _mapper));
+            _likesRepository = new Lazy<ILikesRepository>(() =>  new LikesRepository(_context));
+            _photoRepository = new Lazy<IPhotoRepository>(() =>  new PhotoRepository(_context, _mapper));
         }
 
-        // TODO: Load the below dependencies lazily using the following example:
-        //* Lazy<Orders> _orders = new Lazy<Orders>(() => new Orders(100));
-
         
-        public IUserRepository UserRepository => new UserRepository(_context, _mapper);
+        public IUserRepository UserRepository => _userRepository.Value;
+        public IMessageRepository MessageRepository => _messageRepository.Value;
+        public ILikesRepository LikesRepository => _likesRepository.Value;
+        public IPhotoRepository PhotoRepository => _photoRepository.Value;
 
-        public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
+        public readonly Lazy<IUserRepository> _userRepository;
 
-        public ILikesRepository LikesRepository => new LikesRepository(_context);
-        public IPhotoRepository PhotoRepository => new PhotoRepository(_context, _mapper);
+        public readonly Lazy<IMessageRepository> _messageRepository;
+        public readonly Lazy<ILikesRepository> _likesRepository;
+        public readonly Lazy<IPhotoRepository> _photoRepository;
 
         public async Task<bool> Complete()
         {
