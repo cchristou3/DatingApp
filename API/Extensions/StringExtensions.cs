@@ -19,5 +19,12 @@ namespace API.Extensions
 
             return firstCharToUpper + remaingStr;
         }
+
+          public static bool EqualsIgnoreCase(this string str, string str2)
+        {
+            if (String.IsNullOrEmpty(str) && String.IsNullOrEmpty(str2)) return true;
+            if (String.IsNullOrEmpty(str) || String.IsNullOrEmpty(str2)) return false;
+            return str.Equals(str2, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

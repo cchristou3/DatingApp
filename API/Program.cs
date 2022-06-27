@@ -21,6 +21,8 @@ namespace API
             var host = CreateHostBuilder(args).Build();
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
+            var logger = NLog.LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();
+
             try
             {
                 using(var context = services.GetRequiredService<DataContext>())
@@ -36,10 +38,10 @@ namespace API
             }
             catch (System.Exception ex)
             {
-                var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occured during migration");
+                logger.Error(ex, "An error occured during migration");
             }
 
+            logger.Debug("App is ready");
             await host.RunAsync();
         }
 

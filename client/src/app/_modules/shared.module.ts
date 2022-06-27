@@ -11,6 +11,7 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TimeagoModule } from 'ngx-timeago';
 import { HasRoleDirective } from '../_directives/has-role.directive';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable'
 
 @NgModule({
   declarations: [HasRoleDirective],
@@ -28,7 +29,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ButtonsModule.forRoot(),
     TimeagoModule.forRoot(),
     ModalModule.forRoot(),
+    NgxDatatableModule,
   ],
-  exports: [BsDropdownModule, ToastrModule, TabsModule, NgxGalleryModule, FileUploadModule, BsDatepickerModule, PaginationModule, ButtonsModule, TimeagoModule, HasRoleDirective, ModalModule]
+  exports: [BsDropdownModule, ToastrModule, TabsModule, NgxGalleryModule, FileUploadModule, BsDatepickerModule, PaginationModule, ButtonsModule, TimeagoModule, HasRoleDirective, ModalModule, NgxDatatableModule]
 })
 export class SharedModule { }

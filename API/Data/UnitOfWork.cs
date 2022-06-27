@@ -16,12 +16,17 @@ namespace API.Data
             _mapper = mapper;
             _context = context;
         }
-        //Lazy<Orders> _orders = new Lazy<Orders>(() => new Orders(100));
+
+        // TODO: Load the below dependencies lazily using the following example:
+        //* Lazy<Orders> _orders = new Lazy<Orders>(() => new Orders(100));
+
+        
         public IUserRepository UserRepository => new UserRepository(_context, _mapper);
 
         public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
 
         public ILikesRepository LikesRepository => new LikesRepository(_context);
+        public IPhotoRepository PhotoRepository => new PhotoRepository(_context, _mapper);
 
         public async Task<bool> Complete()
         {

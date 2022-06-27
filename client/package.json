@@ -21,6 +21,7 @@
     "@angular/router": "~12.2.0",
     "@kolkov/ngx-gallery": "^1.2.3",
     "@microsoft/signalr": "^6.0.4",
+    "@swimlane/ngx-datatable": "^20.0.0",
     "bootstrap": "^4.5.3",
     "bootswatch": "^4.5.2",
     "font-awesome": "^4.7.0",
