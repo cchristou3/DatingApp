@@ -83,7 +83,6 @@ namespace API.Data
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientname)
         {
             var messages = await _context.Messages
-            // TODO: Investigate this: without the includes, joins are still done (better performance?)
                 .Where(m =>
                     (m.RecipientUsername == currentUsername && m.SenderUsername == recipientname && !m.RecipientDeleted) ||
                     (m.RecipientUsername == recipientname && m.SenderUsername == currentUsername && !m.SenderDeleted)

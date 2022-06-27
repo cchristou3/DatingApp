@@ -28,6 +28,7 @@ namespace API.Data
         {
             var query = _context.Users.Where(x => x.UserName == username.ToLower());
 
+            // A user can view ALL of his photos, regardless whether they are approved or not.
             if (username.EqualsIgnoreCase(currentLoggedInUsername)) query = query.IgnoreQueryFilters();
 
             return await query
